@@ -1,0 +1,38 @@
+seed: 42
+run_kind: smoke
+device: xpu
+threads: 6
+budget_hours: 0.25
+output_dir: outputs/smoke
+model:
+  id: Qwen/Qwen2-0.5B
+  revision: 91d2aff3f957f99e4c74c962f2f408dcc88a18d8
+  path: models/Qwen2-0.5B
+  max_length: 256
+data:
+  train_limit: 32
+  valid_limit: 16
+  test_limit: 16
+mf:
+  embedding_dim: 64
+  learning_rates: [0.001]
+  weight_decay: 0.0001
+  epochs: 2
+  patience: 2
+  batch_size: 32
+stage1:
+  learning_rate: 0.0001
+  weight_decay: 0.001
+  batch_size: 1
+  accumulation: 1
+  max_steps: 2
+  eval_every: 1
+  eval_batch_size: 2
+stage2:
+  learning_rate: 0.001
+  weight_decay: 0.001
+  batch_size: 1
+  accumulation: 1
+  max_steps: 2
+  eval_every: 1
+  eval_batch_size: 2

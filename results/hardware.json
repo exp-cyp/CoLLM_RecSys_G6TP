@@ -1,0 +1,22 @@
+{
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.18",
+  "torch": "2.8.0+xpu",
+  "cpu": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+  "logical_cpus": 16,
+  "ram_gib": 31.4,
+  "available_ram_gib": 12.41,
+  "xpu_available": true,
+  "devices": {
+    "cpu": {
+      "backward_ok": true,
+      "seconds_including_first_kernel": 0.011763500049710274,
+      "name": "CPU"
+    },
+    "xpu": {
+      "backward_ok": true,
+      "seconds_including_first_kernel": 1.6575736999511719,
+      "name": "Intel(R) Arc(TM) 140T GPU (16GB)"
+    }
+  }
+}

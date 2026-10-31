@@ -1,0 +1,47 @@
+{
+  "num_users": 839,
+  "num_items": 3256,
+  "id_mapping": "sorted raw IDs across retained splits, 0 reserved; no labels used",
+  "label": "rating > 3",
+  "month_slots": {
+    "train": [
+      14,
+      23
+    ],
+    "valid": [
+      24,
+      28
+    ],
+    "test": [
+      29,
+      33
+    ]
+  },
+  "history_limit": 10,
+  "history_protocol": "rolling observed positives, strictly earlier timestamps",
+  "history_difference_from_upstream": "same-timestamp events cannot enter each other's histories",
+  "splits": {
+    "train": {
+      "count": 33891,
+      "positive_rate": 0.5367501696615621,
+      "min_timestamp": 991356108,
+      "max_timestamp": 1017615347,
+      "sha256": "4b0b4ba8dec0fe9964beec48f17a69a9230bf6fca176f6865ebc85753c5ae56c"
+    },
+    "valid": {
+      "count": 10401,
+      "positive_rate": 0.5283145851360446,
+      "min_timestamp": 1017620997,
+      "max_timestamp": 1030837385,
+      "sha256": "0d4d05ad2e998f97fe86c3adbcbc824c7bd7027fadb32dfd9777d7d8d97755f9"
+    },
+    "test": {
+      "count": 7331,
+      "positive_rate": 0.5453553403355613,
+      "min_timestamp": 1030839253,
+      "max_timestamp": 1044033786,
+      "sha256": "c14fa70c4d0e2b8281319a1c3454d4f633a3c45af2b87f6168d3025039e78704"
+    }
+  },
+  "archive_sha256": "a6898adb50b9ca05aa231689da44c217cb524e7ebd39d264c56e2832f2c54e20"
+}

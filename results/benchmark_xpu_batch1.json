@@ -1,0 +1,22 @@
+{
+  "device": "xpu",
+  "steps_measured": 3,
+  "max_length": 256,
+  "stages": {
+    "stage1": {
+      "seconds_per_microbatch": 0.3312806999310851,
+      "tokens": 194,
+      "finite_nonzero_gradient": true,
+      "trainable_parameters": 540672
+    },
+    "stage2": {
+      "seconds_per_microbatch": 0.2672705000732094,
+      "tokens": 219,
+      "finite_nonzero_gradient": true,
+      "trainable_parameters": 615936
+    }
+  },
+  "process_ram_gib": 4.460723876953125,
+  "xpu_peak_allocated_gib": 1.2495408058166504,
+  "batch_size": 1
+}

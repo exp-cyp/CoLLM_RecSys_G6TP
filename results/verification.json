@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-01",
+  "timezone": "Asia/Bangkok",
+  "real_experiment_started": false,
+  "user_constraint": "Leave only the user's final Train click; push source to Git before real training.",
+  "checks": {
+    "pytest": {"passed": 114, "failed": 0, "dependency_deprecation_warnings": 14},
+    "ruff": {"version": "0.12.12", "lint": "passed", "format": "passed"},
+    "source_compilation": "passed",
+    "pinned_assets": "existing cached model revision and file digests verified offline; no model redownload",
+    "dataset": "official archive checksum and regenerated temporal splits verified",
+    "real_config_preflight": "passed with --check; no LLM weights loaded and no optimizer updates",
+    "checkpoint_integrity": "schema, source/data contract, immutable selection, and exact MF/LoRA parents verified",
+    "stopping_behavior": "short budgets, validation timeout, interruption, and failed checkpoint persistence covered by CPU tests",
+    "smoke_pipeline": "MF -> Stage 1 -> Stage 2 -> evaluation -> Thai/HTML report -> curves/CSV -> source/results ZIP passed on Intel XPU",
+    "smoke_sizes": {"train": 32, "valid": 16, "test": 16},
+    "smoke_optimizer_steps": {"stage1": 2, "stage2": 2},
+    "native_window": "Preview visually checked; Train disabled; no actual Train click",
+    "launcher_control": "unique jobs, project lock, safe Stop, completed-stage reuse and time-limit statuses tested",
+    "git_gate": "real experiments require clean HEAD matching upstream; current commit is recorded with each job",
+    "delivery": "all result files, local HTML links/inline charts and source/results ZIP verified"
+  },
+  "cleanup": [
+    "Removed unused No-token scoring, prompt attributes/imports, and history_ids",
+    "Separated labels from model inputs and tokenized fixed prompt fragments once",
+    "Removed duplicate in-memory training log accumulation and unrelated gitignore templates",
+    "Removed incompatible old generated smoke artifacts and regenerated smoke verification",
+    "Updated readable source formatting, README, study guide, status, and source archive"
+  ],
+  "one_click_handoff": {
+    "entry_point": "START_TRAIN.cmd",
+    "guide": "docs/TRAIN_GUIDE_TH.md",
+    "opening_window_starts_training": false,
+    "repository": "https://github.com/exp-cyp/CoLLM_RecSys_G6TP",
+    "real_training_requires_user_click": true
+  },
+  "not_completed": [
+    "Real experiment using configs/local.yaml",
+    "Research conclusions about comparative recommendation performance",
+    "Final results presentation",
+    "Submission to MyCourseVille"
+  ]
+}
