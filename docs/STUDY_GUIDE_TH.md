@@ -55,8 +55,9 @@ Labels อยู่ใน batch สำหรับ loss แต่แยกออ
 ## Training loop และ checkpoint identity
 
 - Batch 4 และ accumulation 2 รวม gradient ก่อน update หนึ่งครั้งเท่ากับ effective batch 8
-- `max_steps=512` หมายถึง optimizer updates ไม่ใช่ epochs
-- ข้อมูลฝึก 4,096 ตัวอย่างกับ effective batch 8 ใช้ 512 updates ต่อหนึ่งรอบข้อมูล
+- `max_steps` หมายถึง optimizer updates ไม่ใช่ epochs
+- ข้อมูลฝึก 33,891 ตัวอย่างกับ effective batch 8 ใช้ประมาณ 4,237 updates ต่อหนึ่งรอบข้อมูล
+  ส่วนรอบแรกที่ใช้ 4,096 ตัวอย่างกำหนดไว้ที่ 512 updates
 - ใช้ learning rate คงที่ และจำกัดเวลาฝึก/ประเมินแยกต่อ process ตาม `budget_hours`
 - ใช้ validation AUC เลือก checkpoints หลังมี optimizer update แล้ว ไม่ใช้ test scores
 - `last/` คือสถานะท้ายสุด ส่วน `best.json` ชี้ trained checkpoint ที่เลือกด้วย validation

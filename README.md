@@ -25,7 +25,7 @@ MovieLens-1M แบ่งตามเวลา กำหนด rating `> 3` เ�
 
 | ชุดข้อมูล | จำนวนทั้งหมดหลังแบ่งเวลา | จำนวนที่ใช้ใน `configs/local.yaml` |
 |---|---:|---:|
-| Train | 33,891 | 4,096 |
+| Train | 33,891 | 33,891 |
 | Validation | 10,401 | 512 |
 | Test | 7,331 | 1,024 |
 
@@ -67,7 +67,8 @@ Source ต้องอยู่ใน Git commit ที่ตรงกับ ups
 | Seed / input length | 42 / 256 tokens |
 | LoRA | r=8, alpha=16, dropout=0.05, q_proj/v_proj |
 | Batch / accumulation | 4 / 2, effective batch 8 |
-| Optimizer steps | 512 ต่อ LLM stage ประมาณหนึ่งรอบของ training subset |
+| Optimizer steps | 4,237 ต่อ LLM stage ประมาณหนึ่งรอบของ training split |
+| Validation interval | ทุก 512 steps และเมื่อจบ stage |
 | Learning rate | MF เลือก 1e-3 หรือ 1e-2; LoRA 1e-4; MLP 1e-3 |
 | เพดานเวลา | 6 ชั่วโมงต่อ stage/คำสั่ง แยกจากกัน |
 
@@ -85,7 +86,9 @@ Source ต้องอยู่ใน Git commit ที่ตรงกับ ups
 
 ## ผลการทดลองรอบแรก
 
-ทดลองวันที่ 1 พฤศจิกายน 2026 ด้วย config ข้างต้น บน source commit `1306bac`
+ทดลองวันที่ 1 พฤศจิกายน 2026 ด้วย train / validation / test 4,096 / 512 / 1,024
+บน source commit ที่บันทึกขณะรัน `1306bac` โดย config เดิมอยู่ใน
+[config ของรอบแรก](results/run_20261101_020249_9c8eff76/config_used.yaml)
 ทั้งสอง LLM stages ฝึกครบ 512 steps ใช้เวลารวมประมาณ 20 นาที 9 วินาที
 
 | โมเดล | Validation AUC | Test AUC |
@@ -104,6 +107,17 @@ CoLLM-MF สูงกว่า MF แต่ยังไม่เหนือ TAL
 การทดลองนี้ปรับ backbone, subset, prompt length และ training budget จากเปเปอร์
 AUC วัดบน observed held-out ratings ส่วน ranking CSV เป็นตัวอย่างการจัดอันดับ
 candidates ภายใต้ประวัติเดียวกัน ไม่ใช่ full-catalog top-k evaluation
+
+## การทดลองเพิ่มข้อมูลฝึก
+
+Config ปัจจุบันใช้ training split ทั้งหมด 33,891 ตัวอย่าง และ 4,237 optimizer steps
+ต่อ LLM stage เพื่อคงการฝึกประมาณหนึ่งรอบข้อมูล โดยใช้ validation/test และ seed
+ชุดเดิม เปลี่ยนช่วงตรวจ validation เป็นทุก 512 steps เพื่อลดค่าใช้จ่ายในการประเมิน
+ค่าของ backbone, LoRA, batch size และ learning rates คงเดิม
+
+ข้อมูลและ MF embeddings เปลี่ยน จึงฝึก MF, LoRA และ mapper ใหม่ในรอบแยก
+ผลรอบแรกเก็บไว้เปรียบเทียบ เลือก checkpoint ด้วย validation เท่านั้น
+การแบ่ง warm/cold อาจเปลี่ยนเมื่อ training interactions ครอบคลุม IDs มากขึ้น
 
 ## โครงสร้างโค้ด
 

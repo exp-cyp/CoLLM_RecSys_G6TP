@@ -15,10 +15,11 @@ Source ต้องอยู่ใน commit ที่ตรงกับ upstrea
 ## การตั้งค่า
 
 - โมเดลฐาน: Qwen2-0.5B, revision ที่ pin ไว้
-- ข้อมูล train / validation / test: 4,096 / 512 / 1,024
+- ข้อมูล train / validation / test: 33,891 / 512 / 1,024
 - MF embeddings: 64 มิติ
 - Batch 4, gradient accumulation 2
-- Stage 1 และ Stage 2: 512 optimizer steps ต่อส่วน
+- Stage 1 และ Stage 2: 4,237 optimizer steps ต่อส่วน ประมาณหนึ่งรอบข้อมูล
+- ตรวจ validation ทุก 512 steps และเมื่อจบ stage
 - ใช้ Intel Arc 140T ผ่าน XPU; MF ใช้ CPU
 - จำกัดเวลา 6 ชั่วโมงต่อขั้น แยกจากเวลารวมทั้ง pipeline
 

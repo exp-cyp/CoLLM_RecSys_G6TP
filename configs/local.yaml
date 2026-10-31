@@ -10,7 +10,7 @@ model:
   path: models/Qwen2-0.5B
   max_length: 256
 data:
-  train_limit: 4096
+  train_limit: 33891
   valid_limit: 512
   test_limit: 1024
 mf:
@@ -25,14 +25,14 @@ stage1:
   weight_decay: 0.001
   batch_size: 4
   accumulation: 2
-  max_steps: 512
-  eval_every: 128
+  max_steps: 4237
+  eval_every: 512
   eval_batch_size: 4
 stage2:
   learning_rate: 0.001
   weight_decay: 0.001
   batch_size: 4
   accumulation: 2
-  max_steps: 512
-  eval_every: 128
+  max_steps: 4237
+  eval_every: 512
   eval_batch_size: 4
