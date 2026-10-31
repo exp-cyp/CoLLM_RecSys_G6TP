@@ -17,12 +17,11 @@ license is retained in `docs/licenses/CoLLM-BSD.txt`.
 
 MovieLens-1M is provided by GroupLens: https://grouplens.org/datasets/movielens/1m/.
 Observe its README and data-use conditions. Data is downloaded separately and is
-not included in the source submission archive.
+not included in this repository.
 
 Qwen2-0.5B is provided by the Qwen team under Apache-2.0:
 https://huggingface.co/Qwen/Qwen2-0.5B.
 Weights and their license are downloaded separately; provenance records the exact
 model revision. Hugging Face Transformers and PEFT provide the model and LoRA implementation.
 
-LLM assistance was used to implement and document this project. All group members
-must independently understand and verify data preparation, training, ranking, and evaluation.
+LLM assistance was used in implementation and documentation.

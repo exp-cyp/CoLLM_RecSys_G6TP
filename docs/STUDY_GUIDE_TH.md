@@ -1,4 +1,4 @@
-# คู่มือทำความเข้าใจ CoLLM และเตรียมสอบ
+# สถาปัตยกรรมและการทำงานของ CoLLM-MF
 
 เริ่มอ่าน `data.py` → `models.py` → `train.py` → `checkpoints.py` → `evaluate.py`
 ใช้ข้อมูลหนึ่งแถวตามไปจนถึงคะแนนทำนาย ก่อนขยายไปดู training loop ทั้งชุด
@@ -16,11 +16,11 @@
 | Output head | คำนวณเฉพาะแถว Yes ได้ raw scores `[4]` |
 | Loss / evaluation | BCE กับ labels หรือ AUC/ranking จาก continuous scores |
 
-`L` คือความยาว prompt หลัง padding ใน batch นั้น สูงสุด 256 ตาม config ที่เสนอ
-ไม่มี `history_ids` ใน schema ปัจจุบันเพราะโมเดลใช้ชื่อหนังใน history ส่วน MF ใช้ uid/iid ปัจจุบัน
+`L` คือความยาว prompt หลัง padding ใน batch นั้น สูงสุด 256 ตาม `configs/local.yaml`
+โมเดลใช้ชื่อหนังใน history ส่วน MF ใช้ uid/iid ของตัวอย่างปัจจุบัน
 Labels อยู่ใน batch สำหรับ loss แต่แยกออกก่อนเรียก `CoLLM.forward()`
 
-## กลไกที่ทุกคนต้องอธิบายได้
+## กลไกของโมเดล
 
 1. **MF:** เรียน user/item vectors แล้วใช้ dot product ทำนายความชอบด้วย BCE
    แต่ละมิติเป็น latent feature ไม่ได้กำหนดว่าเป็น genre ใดล่วงหน้า
@@ -46,6 +46,7 @@ Labels อยู่ใน batch สำหรับ loss แต่แยกออ
 - Rolling observed-feedback protocol อนุญาตให้ held-out feedback ที่เกิดก่อนหน้า
   เข้า history ของเหตุการณ์ถัดไป แต่ไม่ใช้ held-out labels ปรับ parameters
 - Warm หมายถึงทั้ง user และ item มีอย่างน้อย 3 interactions ใน training selection
+  ส่วน cold รวมทั้ง ID ที่ไม่เคยเห็นและ ID ที่มีข้อมูลฝึกน้อยกว่าเกณฑ์
 - AUC วัดความสามารถให้ positive ได้คะแนนสูงกว่า negative ไม่ใช่ accuracy
   Warm/Cold AUC เป็น metric เดียวกันที่แบ่งกลุ่ม ไม่ใช่ UAUC รายผู้ใช้
 - Ranking ตัวอย่างตรึง user/history/เวลา แล้วเรียง candidate scores โดยไม่ใช้ labels
@@ -55,6 +56,8 @@ Labels อยู่ใน batch สำหรับ loss แต่แยกออ
 
 - Batch 4 และ accumulation 2 รวม gradient ก่อน update หนึ่งครั้งเท่ากับ effective batch 8
 - `max_steps=512` หมายถึง optimizer updates ไม่ใช่ epochs
+- ข้อมูลฝึก 4,096 ตัวอย่างกับ effective batch 8 ใช้ 512 updates ต่อหนึ่งรอบข้อมูล
+- ใช้ learning rate คงที่ และจำกัดเวลาฝึก/ประเมินแยกต่อ process ตาม `budget_hours`
 - ใช้ validation AUC เลือก checkpoints หลังมี optimizer update แล้ว ไม่ใช้ test scores
 - `last/` คือสถานะท้ายสุด ส่วน `best.json` ชี้ trained checkpoint ที่เลือกด้วย validation
   ทั้งสองอาจเป็นคนละน้ำหนัก และ `last/` ไม่ใช่ automatic resume
@@ -78,23 +81,14 @@ Labels อยู่ใน batch สำหรับ loss แต่แยกออ
 7. ดูการสร้าง selection ใน `checkpoints.py` และไฟล์ `stage/best.json`
 8. ดู parent verification ก่อน `evaluate.py` โหลด mapper และสร้าง predictions
 
-ผลทดสอบล่าสุดอยู่ใน `results/verification.json` Tests ตรวจกลไกและความถูกต้องของ pipeline
-ไม่ได้พิสูจน์ว่า CoLLM แนะนำหนังดีกว่า baselines ผล smoke ใช้แทนผลทดลองจริงไม่ได้
+## ขอบเขตการทดลอง
 
-## การแบ่งงานและนำเสนอ
+Implementation นี้รักษากลไกหลักของ CoLLM แต่ใช้ Qwen2-0.5B, ข้อมูลบางส่วน,
+input length 256 และงบการฝึกที่กำหนดใน config จึงไม่ใช่การทำซ้ำตารางผลในเปเปอร์โดยตรง
+การเปรียบเทียบโมเดลต้องใช้ตัวอย่าง test และวิธีคำนวณ AUC ชุดเดียวกัน
 
-| ผู้รับผิดชอบหลัก | งานหลัก | สิ่งที่ต้องถ่ายทอดให้เพื่อน |
-|---|---|---|
-| คนที่ 1 | ข้อมูล, temporal split, history, MF | leakage และ collaborative vectors |
-| คนที่ 2 | prompt, LoRA, CIE, gradients | tensor flow และการ freeze แต่ละ stage |
-| คนที่ 3 | checkpoints, evaluation, ranking, report | provenance, selection และการตีความ AUC |
+Tests และ smoke checks ตรวจความถูกต้องของ pipeline ส่วนประสิทธิภาพการแนะนำ
+ต้องพิจารณาจากผลทดลองจริง รวมถึงความครอบคลุมของ users/items ในชุดฝึก
+การทดลอง seed เดียวไม่ครอบคลุมความแปรปรวนจากการสุ่มระหว่างฝึก
 
-ทุกคนต้อง cross-review และตอบส่วนของเพื่อนได้ แบ่งความรับผิดชอบหลักได้ แต่ไม่แบ่งความเข้าใจ
-
-โครงนำเสนอไม่เกิน 10 นาที: ปัญหา 1 นาที, โมเดล/สอง stages 2 นาที, ข้อมูล/leakage
-1.5 นาที, สิ่งที่ปรับตามเครื่อง 1 นาที, ผลจริง 2 นาที, ranking/ข้อจำกัด/แบ่งงาน 2 นาที
-ส่วนผลจริงยังต้องรอรอบทดลองที่ผู้ใช้สั่งให้เริ่มแล้วเท่านั้น
-
-วันที่สอบตามเอกสารคือ 5 พฤศจิกายน 2026 ส่ง ZIP source code ก่อนเข้าเรียนตามช่องทาง
-ที่อาจารย์กำหนด และระบุ backbone, subsets, input length, training budget,
-constant learning rates, seed เดียว และ observed-rating evaluation ให้ชัดเจน
+ดูวิธีรันและตำแหน่งผลลัพธ์ใน [TRAIN_GUIDE_TH.md](TRAIN_GUIDE_TH.md)

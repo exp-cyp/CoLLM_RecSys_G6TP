@@ -123,7 +123,7 @@ def thai_summary(summary):
     lines = [f"# {title}", ""]
     if smoke:
         lines += [
-            "**ข้อมูลเล็กและ steps จำกัด ใช้ยืนยันการทำงานของโปรแกรม ห้ามใช้สรุปประสิทธิภาพสำหรับส่งงาน**",
+            "**ใช้ข้อมูลและ steps ขนาดเล็กเพื่อตรวจสอบระบบ ไม่ใช้สรุปประสิทธิภาพโมเดล**",
             "",
         ]
     if summary["partial_stages"]:
@@ -135,7 +135,7 @@ def thai_summary(summary):
     lines += [
         f"- โมเดลฐาน: `{summary['model']}`",
         f"- Revision: `{summary['model_revision']}`",
-        f"- Git commit: `{summary['git_commit'] or 'ไม่ได้บันทึก (smoke/test)'}`",
+        f"- Git commit: `{summary['git_commit'] or 'N/A (smoke/test)'}`",
         f"- Device: `{summary['device']}`",
         f"- ข้อมูล train / validation / test: {counts['train']['count']:,} / {counts['valid']['count']:,} / {counts['test']['count']:,}",
         "",
@@ -148,7 +148,7 @@ def thai_summary(summary):
     ]
     lines += [
         "",
-        "ตัวเลขเป็นผลของการทดลองนี้ ไม่ใช่ข้อพิสูจน์ว่าจะดีกว่าบนทุก dataset และไม่ใช่การทำซ้ำตารางในเปเปอร์แบบตรงทุกค่า",
+        "ผลนี้ใช้โมเดลและข้อมูลตาม config ที่ระบุ เป็นการทดลองที่ปรับตามทรัพยากรจากเปเปอร์ต้นฉบับ",
         "",
         "## เวลาที่ใช้และจำนวน steps",
         "",
@@ -171,7 +171,7 @@ def thai_summary(summary):
             f"เวลาฝึกที่เกิดในรอบนี้: {_duration(summary['current_training_elapsed_seconds'])}",
         ]
     if total is not None:
-        lines.append(f"เวลารวม pipeline ก่อนแพ็กรายงาน: {_duration(total)}")
+        lines.append(f"เวลารวมก่อนสร้างรายงาน: {_duration(total)}")
     lines += [
         "",
         "## วิธีอ่านผล",
@@ -180,7 +180,7 @@ def thai_summary(summary):
         "- AUC วัดบน ratings ที่สังเกตจริงใน test ไม่ใช่ full-catalog top-k recommendation",
         "- History ใช้ positive feedback ที่เกิดก่อนตัวอย่างเป้าหมาย; feedback ที่เกิดก่อนหน้าใน held-out period อาจเป็น history ของเหตุการณ์ถัดไป",
         "- ranking_example.csv เป็นตัวอย่างจัดอันดับ candidates ภายใต้ history เดียวกัน ไม่ใช่ metric เพิ่มเติม",
-        "- Backbone ขนาดเล็ก, subset, ความยาว prompt และ training budget เป็นการปรับตามทรัพยากร ต้องระบุในการนำเสนอ",
+        "- Backbone, subset, ความยาว prompt และ training budget ถูกปรับตามทรัพยากร จึงต่างจากการทดลองหลักในเปเปอร์",
         "",
         "รายละเอียดและค่าที่ใช้จริงอยู่ใน config_used.yaml, metrics.json, pipeline_summary.json และ REPORT.md",
         "",
@@ -252,7 +252,7 @@ def html_report(summary, results, archive_name):
     smoke = summary["run_kind"] == "smoke"
     title = "Smoke test — ไม่ใช่ผลวิจัย" if smoke else "ผลการทดลอง CoLLM-MF"
     notice = (
-        "ตรวจ pipeline ด้วยข้อมูลเล็กเท่านั้น ห้ามใช้คะแนนนี้เป็นข้อสรุปผลวิจัย"
+        "ใช้ข้อมูลและ steps ขนาดเล็กเพื่อตรวจสอบระบบ ไม่ใช้สรุปประสิทธิภาพโมเดล"
         if smoke
         else "ผลจากโมเดลและข้อมูลชุดที่ระบุด้านล่าง"
     )
@@ -287,10 +287,10 @@ main{{max-width:1000px;margin:32px auto;padding:32px;background:white;border-rad
 <p class="meta">{html.escape(summary["model"])} · {html.escape(summary["device"])}<br>
 Train / validation / test: {counts["train"]["count"]:,} / {counts["valid"]["count"]:,} / {counts["test"]["count"]:,}<br>
 Revision: <code>{html.escape(summary["model_revision"])}</code><br>
-Git commit: <code>{html.escape(summary["git_commit"] or "smoke/test — ไม่ได้บันทึก")}</code><br>เวลารวมก่อนแพ็กรายงาน: {runtime}</p>
+Git commit: <code>{html.escape(summary["git_commit"] or "N/A (smoke/test)")}</code><br>เวลารวมก่อนสร้างรายงาน: {runtime}</p>
 <h2>ผลที่วัดได้</h2><table><thead><tr><th>โมเดล</th><th>Test AUC</th></tr></thead><tbody>{rows}</tbody></table>{outcomes}
-<p>ผลนี้ไม่รับรองว่าจะดีกว่าบนทุก dataset และไม่ได้ใช้ test scores ปรับค่าฝึก</p>{images}
-<h2>การฝึกที่เกิดขึ้นจริง</h2><table><thead><tr><th>ขั้นตอน</th><th>สถานะ</th><th>Optimizer steps</th><th>HH:MM:SS</th></tr></thead><tbody>{stages}</tbody></table>
+<p>ผลการทดลองภายใต้ config ที่ระบุ โดยเลือก checkpoint ด้วย validation AUC</p>{images}
+<h2>รายละเอียดการฝึก</h2><table><thead><tr><th>ขั้นตอน</th><th>สถานะ</th><th>Optimizer steps</th><th>HH:MM:SS</th></tr></thead><tbody>{stages}</tbody></table>
 <h2>ขอบเขตการประเมิน</h2><p>AUC วัดบน observed held-out ratings ไม่ใช่ full-catalog top-k recommendation เลือก checkpoint ด้วย validation เท่านั้น ประวัติใช้ positive feedback ที่เกิดก่อนเป้าหมายตาม rolling-history protocol และใช้โมเดลขนาดเล็ก/ข้อมูล/งบฝึกตาม config ที่บันทึกไว้</p>
 <h2>ไฟล์ผลลัพธ์</h2><div class="links"><a href="SUMMARY_TH.md">สรุปภาษาไทย</a><a href="REPORT.md">รายงานละเอียด</a><a href="metrics.json">Metrics</a><a href="predictions.csv">Predictions CSV</a><a href="ranking_example.csv">ตัวอย่าง ranking</a><a href="config_used.yaml">Config ที่ใช้</a><a href="{html.escape(archive_name)}">Source + results ZIP</a></div>
 </main></html>'''

@@ -1,4 +1,4 @@
-"""Local Train window. Opening this module never starts a training job."""
+"""Desktop interface for training and evaluating CoLLM experiments."""
 
 from __future__ import annotations
 
@@ -288,15 +288,13 @@ class TrainWindow:
         window.protocol("WM_DELETE_WINDOW", self.on_close)
         frame = ttk.Frame(window, padding=18)
         frame.pack(fill="both", expand=True)
-        ttk.Label(frame, text="CoLLM: เริ่มการทดลอง", font=("Segoe UI", 19, "bold")).pack(anchor="w")
-        ttk.Label(frame, text="กด Train เมื่อพร้อม ระบบจะฝึก ประเมิน และสร้างรายงานให้ครบ").pack(
-            anchor="w", pady=(4, 12)
-        )
+        ttk.Label(frame, text="CoLLM: การทดลอง", font=("Segoe UI", 19, "bold")).pack(anchor="w")
+        ttk.Label(frame, text="ฝึกและประเมิน MF, TALLRec และ CoLLM-MF").pack(anchor="w", pady=(4, 12))
         self.settings_text = tk.StringVar()
         ttk.Label(frame, textvariable=self.settings_text, justify="left", wraplength=880).pack(
             anchor="w"
         )
-        self.status_text = tk.StringVar(value="กำลังเปิดหน้าต่าง — ยังไม่ได้เริ่มเทรน")
+        self.status_text = tk.StringVar(value="กำลังเริ่มต้นโปรแกรม")
         ttk.Label(
             frame, textvariable=self.status_text, font=("Segoe UI", 11, "bold"), wraplength=880
         ).pack(anchor="w", pady=(14, 4))
@@ -325,7 +323,7 @@ class TrainWindow:
             buttons, text="เปิด ZIP", command=lambda: self.open_path(self.zip_path), state="disabled"
         )
         self.zip_button.pack(side="right", padx=8)
-        ttk.Label(frame, text="บันทึกการทำงาน (log ฉบับเต็มอยู่ในโฟลเดอร์งาน)").pack(anchor="w")
+        ttk.Label(frame, text="บันทึกการฝึกและประเมินผล").pack(anchor="w")
         self.log = scrolledtext.ScrolledText(
             frame, height=18, wrap="word", state="disabled", font=("Consolas", 10)
         )
@@ -333,7 +331,7 @@ class TrainWindow:
         self.refresh_settings()
         window.after(100, self.poll_events)
         if preview:
-            self.status_text.set("ตัวอย่างหน้าต่าง — ปุ่ม Train ปิดอยู่ และไม่มีการตรวจ/เทรน")
+            self.status_text.set("โหมดแสดงตัวอย่าง — ปิดการฝึกและตรวจความพร้อม")
             self.check_button.configure(state="disabled")
         else:
             window.after(150, self.check_readiness)
@@ -344,15 +342,15 @@ class TrainWindow:
             data = cfg["data"]
             self.settings_text.set(
                 f"โมเดล: {cfg['model']['id']}  |  อุปกรณ์: {cfg['device'].upper()}\n"
-                f"ข้อมูล: ฝึก {data['train_limit']:,} / เลือกโมเดล {data['valid_limit']:,} / ทดสอบ {data['test_limit']:,}\n"
+                f"ข้อมูล: train {data['train_limit']:,} / validation {data['valid_limit']:,} / test {data['test_limit']:,}\n"
                 f"MF → TALLRec → CoLLM-MF → AUC / Ranking / รายงาน / ZIP\n"
-                f"เพดานเวลา {cfg['budget_hours']:g} ชั่วโมงต่อขั้น ไม่ได้ต้องรันให้ครบ"
+                f"เวลาสูงสุด {cfg['budget_hours']:g} ชั่วโมงต่อขั้น"
             )
             previous = reusable_job(cfg)
             self.reuse_text.set(
-                "พบงานก่อนหน้าที่ยังไม่จบ: จะใช้ขั้นที่จบแล้วต่อ ส่วนขั้นที่ไม่จบเริ่มใหม่ (ไม่ใช่ optimizer resume)"
+                "พบการทดลองที่ยังไม่จบ: ใช้ checkpoint ของขั้นที่เสร็จแล้ว และเริ่มขั้นที่ค้างใหม่"
                 if previous
-                else "เปิดหน้าต่างอย่างเดียวยังไม่เริ่มเทรน และผลแต่ละรอบเก็บแยกกัน"
+                else "กด Train เพื่อเริ่มการทดลองใหม่ ผลลัพธ์แต่ละรอบเก็บแยกโฟลเดอร์"
             )
         except Exception as error:
             self.settings_text.set(f"อ่านไฟล์ตั้งค่าไม่ได้: {error}")
@@ -370,7 +368,7 @@ class TrainWindow:
         self.ready = False
         self.controller.prepare_start()
         self.set_busy(True)
-        self.status_text.set("กำลังตรวจไฟล์และโค้ดก่อนเริ่ม — ยังไม่ได้เทรน")
+        self.status_text.set("กำลังตรวจข้อมูล โมเดล และเวอร์ชันโค้ด")
 
         def worker():
             try:
@@ -393,7 +391,7 @@ class TrainWindow:
 
     def on_stop(self):
         if self.controller.request_stop():
-            self.status_text.set("ขอหยุดแล้ว กำลังรอให้โปรแกรมเก็บงานอย่างปลอดภัย")
+            self.status_text.set("กำลังหยุดและบันทึก checkpoint")
             self.stop_button.configure(state="disabled")
 
     def append_log(self, text):
@@ -422,12 +420,12 @@ class TrainWindow:
             self.status_text.set(
                 "ได้ผลลัพธ์บางส่วนตามเพดานเวลา — ตรวจสถานะในรายงาน"
                 if status == "time_limit" or completion == "time_limit"
-                else "เสร็จแล้ว — เปิดผลลัพธ์และ ZIP ได้"
+                else "การทดลองเสร็จสมบูรณ์ — เปิดผลลัพธ์ได้"
             )
         elif status in {"stopped", "interrupted"}:
-            self.status_text.set("หยุดแล้ว เก็บงานไว้แล้ว; กด Train เพื่อใช้ขั้นที่จบแล้วต่อได้")
+            self.status_text.set("หยุดและบันทึกแล้ว — กด Train เพื่อใช้ขั้นที่เสร็จแล้วต่อ")
         else:
-            self.status_text.set("งานยังไม่สำเร็จ — อ่านข้อความผิดพลาดในบันทึก")
+            self.status_text.set("การทดลองไม่สำเร็จ — ตรวจรายละเอียดในบันทึก")
             self.append_log(str(state.get("message") or state.get("error") or "ตรวจ pipeline.log"))
         if self.controller.job_dir is not None:
             cfg = load_settings(self.controller.job_dir / "config.yaml")
@@ -457,7 +455,7 @@ class TrainWindow:
                         self.destroy()
                         return
                     self.ready = True
-                    self.status_text.set("พร้อมแล้ว — กด Train เพื่อเริ่มรอบจริง")
+                    self.status_text.set("พร้อมเริ่มการทดลอง")
                     self.set_busy(False)
                 elif kind == "checking":
                     self.status_text.set("กำลังตรวจซ้ำก่อนเริ่มเทรน")
@@ -472,7 +470,7 @@ class TrainWindow:
                     self.ready = False
                     self.set_busy(False)
                     self.stop_button.configure(state="disabled")
-                    self.status_text.set("ยังไม่พร้อมเริ่ม — ตรวจรายละเอียดและกดตรวจอีกครั้ง")
+                    self.status_text.set("ตรวจความพร้อมไม่ผ่าน — ตรวจรายละเอียดในบันทึก")
                     self.append_log(value)
                     if self.close_after_stop:
                         self.destroy()

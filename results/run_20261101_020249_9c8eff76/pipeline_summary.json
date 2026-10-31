@@ -1,0 +1,89 @@
+{
+  "run_kind": "experiment",
+  "completion_status": "complete",
+  "partial_stages": [],
+  "model": "Qwen/Qwen2-0.5B",
+  "model_revision": "91d2aff3f957f99e4c74c962f2f408dcc88a18d8",
+  "git_commit": "1306bac1cbe4880f12e6b223929f4f3570e5a336",
+  "device": "xpu",
+  "data_manifest": {
+    "train": {
+      "count": 4096,
+      "record_ids_sha256": "cbb7b47bcea6c210c10ea0e7704cb3cdf26fb062f0dc47696f5d24876571a3e9",
+      "content_sha256": "b95fec0145a9ad6a6b04d85ec2fbb37c66f160eefdc56b002db2a782f2a4e1cb",
+      "positive_rate": 0.534912109375
+    },
+    "valid": {
+      "count": 512,
+      "record_ids_sha256": "06a3b2570909771aa69b5abe947540d28cedb789111a1c351b1c47418d78d810",
+      "content_sha256": "d8cf4c33b7bb0762e5b49ec0aebc3606ac5c7e0587fa208d3fca9ed1da17b61d",
+      "positive_rate": 0.51171875
+    },
+    "test": {
+      "count": 1024,
+      "record_ids_sha256": "c221749552654b34f80edb07ca2d7d401a8484be03b8c6d92ddad9f958e4d3a7",
+      "content_sha256": "e779079aa56f9fb783a53564cba48a92df0ecb64d5b6384da9633b98bf08316e",
+      "positive_rate": 0.5380859375
+    }
+  },
+  "pipeline_elapsed_seconds": 1208.9689999998081,
+  "training_elapsed_seconds": 1096.344000000041,
+  "current_training_elapsed_seconds": 1096.344000000041,
+  "evaluation_elapsed_seconds": 85.5930000001099,
+  "stages": {
+    "mf": {
+      "status": "complete",
+      "steps_completed": 328,
+      "elapsed_seconds": 6.1560000001918525,
+      "best_valid_auc": 0.519435114503817
+    },
+    "stage1": {
+      "status": "complete",
+      "steps_completed": 512,
+      "elapsed_seconds": 612.0629999998491,
+      "best_valid_auc": 0.5629923664122137
+    },
+    "stage2": {
+      "status": "complete",
+      "steps_completed": 512,
+      "elapsed_seconds": 478.125,
+      "best_valid_auc": 0.5988931297709923
+    }
+  },
+  "metrics": {
+    "MF": {
+      "auc": 0.5197430771651006,
+      "warm_auc": 0.6117794486215539,
+      "cold_auc": 0.4926014616349076,
+      "checkpoint_step": 80,
+      "best_valid_auc": 0.519435114503817
+    },
+    "TALLRec": {
+      "auc": 0.6345084662520193,
+      "warm_auc": 0.6423558897243108,
+      "cold_auc": 0.6319340118150705,
+      "checkpoint_step": 384,
+      "best_valid_auc": 0.5629923664122137,
+      "training_steps_completed": 512,
+      "training_status": "complete"
+    },
+    "CoLLM-MF": {
+      "auc": 0.63107822410148,
+      "warm_auc": 0.5855263157894737,
+      "cold_auc": 0.6410268719431611,
+      "checkpoint_step": 512,
+      "best_valid_auc": 0.5988931297709923,
+      "training_steps_completed": 512,
+      "training_status": "complete"
+    }
+  },
+  "collm_auc_delta": {
+    "MF": 0.11133514693637936,
+    "TALLRec": -0.003430242150539331
+  },
+  "test_used_for_selection": false,
+  "evaluation_protocol": "ROC AUC over observed held-out ratings; not full-catalog top-k evaluation",
+  "contract_sha256": "fc5b34e47b34ac26f6b64d59bf69edfb37cc4635c103be3465f6b2d2d06de512",
+  "reused_stages": [],
+  "job_dir": ".cache\\jobs\\run_20261101_020249_9c8eff76"
+}
