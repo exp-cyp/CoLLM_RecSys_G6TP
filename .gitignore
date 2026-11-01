@@ -22,7 +22,7 @@ data/
 models/
 outputs/
 submission/
-# Generated runs are local; retain selected artifacts from the first experiment.
+# Generated runs are local; retain selected experiment artifacts.
 /results/*/
 !/results/run_20261101_020249_9c8eff76/
 /results/run_20261101_020249_9c8eff76/*
@@ -31,4 +31,11 @@ submission/
 !/results/run_20261101_020249_9c8eff76/pipeline_summary.json
 !/results/run_20261101_020249_9c8eff76/auc_comparison.png
 !/results/run_20261101_020249_9c8eff76/training_curves.png
+!/results/run_20261101_033145_feb1a19f/
+/results/run_20261101_033145_feb1a19f/*
+!/results/run_20261101_033145_feb1a19f/config_used.yaml
+!/results/run_20261101_033145_feb1a19f/metrics.json
+!/results/run_20261101_033145_feb1a19f/pipeline_summary.json
+!/results/run_20261101_033145_feb1a19f/auc_comparison.png
+!/results/run_20261101_033145_feb1a19f/training_curves.png
 *.log

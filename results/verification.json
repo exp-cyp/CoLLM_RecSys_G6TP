@@ -24,5 +24,14 @@
     "records": {"train": 4096, "valid": 512, "test": 1024},
     "optimizer_steps": {"stage1": 512, "stage2": 512},
     "metrics": "results/run_20261101_020249_9c8eff76/metrics.json"
+  },
+  "latest_experiment": {
+    "run_id": "run_20261101_033145_feb1a19f",
+    "source_commit": "2995b88f74998e9cbf57bc09a875073cc73868f3",
+    "status": "complete",
+    "records": {"train": 33891, "valid": 512, "test": 1024},
+    "optimizer_steps": {"stage1": 4237, "stage2": 4237},
+    "validation_test_records_match_first_experiment": true,
+    "metrics": "results/run_20261101_033145_feb1a19f/metrics.json"
   }
 }

@@ -1,0 +1,110 @@
+{
+  "run_kind": "experiment",
+  "model": "Qwen/Qwen2-0.5B",
+  "model_revision": "91d2aff3f957f99e4c74c962f2f408dcc88a18d8",
+  "device": "xpu",
+  "config": {
+    "seed": 42,
+    "run_kind": "experiment",
+    "device": "xpu",
+    "threads": 6,
+    "budget_hours": 6,
+    "output_dir": "outputs/run_20261101_033145_feb1a19f",
+    "model": {
+      "id": "Qwen/Qwen2-0.5B",
+      "revision": "91d2aff3f957f99e4c74c962f2f408dcc88a18d8",
+      "path": "models/Qwen2-0.5B",
+      "max_length": 256
+    },
+    "data": {
+      "train_limit": 33891,
+      "valid_limit": 512,
+      "test_limit": 1024
+    },
+    "mf": {
+      "embedding_dim": 64,
+      "learning_rates": [
+        0.001,
+        0.01
+      ],
+      "weight_decay": 0.0001,
+      "epochs": 150,
+      "patience": 15,
+      "batch_size": 512
+    },
+    "stage1": {
+      "learning_rate": 0.0001,
+      "weight_decay": 0.001,
+      "batch_size": 4,
+      "accumulation": 2,
+      "max_steps": 4237,
+      "eval_every": 512,
+      "eval_batch_size": 4
+    },
+    "stage2": {
+      "learning_rate": 0.001,
+      "weight_decay": 0.001,
+      "batch_size": 4,
+      "accumulation": 2,
+      "max_steps": 4237,
+      "eval_every": 512,
+      "eval_batch_size": 4
+    }
+  },
+  "data_manifest": {
+    "train": {
+      "count": 33891,
+      "record_ids_sha256": "3c1c434d69549e28c008bcdd6018971720ff28d441bfd648dd793a3be7341768",
+      "content_sha256": "2c14d5fe2b3bea390c8406dafcf3ca72d949e7ebb4fd561436a04e9f07d3a335",
+      "positive_rate": 0.5367501696615621
+    },
+    "valid": {
+      "count": 512,
+      "record_ids_sha256": "06a3b2570909771aa69b5abe947540d28cedb789111a1c351b1c47418d78d810",
+      "content_sha256": "bb7a59ce051fb1495faf0120dbd5e9c14d9c1b0dc44240893711bf2e4a28f4e9",
+      "positive_rate": 0.51171875
+    },
+    "test": {
+      "count": 1024,
+      "record_ids_sha256": "c221749552654b34f80edb07ca2d7d401a8484be03b8c6d92ddad9f958e4d3a7",
+      "content_sha256": "bc8ffdbd4ce0404d3b8758fb9eaaeb3ceda5c9196728f7e4916a08b654ed20f0",
+      "positive_rate": 0.5380859375
+    }
+  },
+  "parents": {
+    "mf": "dcd06184784f1a1a14eadab235a7972596c705e324f482c891213b063e65ff6f",
+    "stage1": "3f5e045bfd0b0465001d00cccecd1d1a2efc38d5abc4f56d98caa82889470942"
+  },
+  "contract_sha256": "d44962185a3c511090be286b0ec3ddb2e6a29af54de974596a9dd79caed26f32",
+  "elapsed_seconds": 68.75,
+  "evaluation_protocol": "ROC AUC over observed held-out ratings; not full-catalog top-k evaluation",
+  "score": "raw Yes logit, matching upstream Qwen BCE; no vocabulary softmax",
+  "test_used_for_selection": false,
+  "metrics": {
+    "MF": {
+      "auc": 0.6368125606719284,
+      "warm_auc": 0.7310637829811222,
+      "cold_auc": 0.5052687949143173,
+      "checkpoint_step": 4288,
+      "best_valid_auc": 0.7014656488549619
+    },
+    "TALLRec": {
+      "auc": 0.6876944859049279,
+      "warm_auc": 0.6861517097248766,
+      "cold_auc": 0.6920259812050857,
+      "checkpoint_step": 2560,
+      "best_valid_auc": 0.6454656488549619,
+      "training_steps_completed": 4237,
+      "training_status": "complete"
+    },
+    "CoLLM-MF": {
+      "auc": 0.706725807008591,
+      "warm_auc": 0.7535370062284308,
+      "cold_auc": 0.6441835959093422,
+      "checkpoint_step": 3072,
+      "best_valid_auc": 0.7230229007633587,
+      "training_steps_completed": 4237,
+      "training_status": "complete"
+    }
+  }
+}

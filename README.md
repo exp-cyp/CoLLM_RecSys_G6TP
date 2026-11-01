@@ -108,7 +108,7 @@ CoLLM-MF สูงกว่า MF แต่ยังไม่เหนือ TAL
 AUC วัดบน observed held-out ratings ส่วน ranking CSV เป็นตัวอย่างการจัดอันดับ
 candidates ภายใต้ประวัติเดียวกัน ไม่ใช่ full-catalog top-k evaluation
 
-## การทดลองเพิ่มข้อมูลฝึก
+## ผลการทดลองเพิ่มข้อมูลฝึก
 
 Config ปัจจุบันใช้ training split ทั้งหมด 33,891 ตัวอย่าง และ 4,237 optimizer steps
 ต่อ LLM stage เพื่อคงการฝึกประมาณหนึ่งรอบข้อมูล โดยใช้ validation/test และ seed
@@ -118,6 +118,24 @@ Config ปัจจุบันใช้ training split ทั้งหมด 33
 ข้อมูลและ MF embeddings เปลี่ยน จึงฝึก MF, LoRA และ mapper ใหม่ในรอบแยก
 ผลรอบแรกเก็บไว้เปรียบเทียบ เลือก checkpoint ด้วย validation เท่านั้น
 การแบ่ง warm/cold อาจเปลี่ยนเมื่อ training interactions ครอบคลุม IDs มากขึ้น
+
+รอบ `run_20261101_033145_feb1a19f` ฝึกและประเมินครบเมื่อวันที่ 1 พฤศจิกายน 2026
+บน source commit `2995b88` ใช้เวลารวมประมาณ 1 ชั่วโมง 51 นาที 3 วินาที
+ทั้งสอง LLM stages ฝึกครบ 4,237 steps
+
+| โมเดล | Validation AUC | Test AUC |
+|---|---:|---:|
+| MF | 0.7015 | 0.6368 |
+| TALLRec | 0.6455 | 0.6877 |
+| CoLLM-MF | **0.7230** | **0.7067** |
+
+CoLLM-MF มี Test AUC สูงสุดในรอบนี้ สูงกว่า TALLRec 0.0190 และ MF 0.0699
+ผลยังมาจาก seed เดียว การเพิ่มข้อมูลมาพร้อมจำนวน steps ที่เพิ่มขึ้น
+จึงไม่ใช่การทดลองที่แยกผลของปริมาณข้อมูลเพียงปัจจัยเดียว
+รายละเอียดอยู่ใน [metrics รอบล่าสุด](results/run_20261101_033145_feb1a19f/metrics.json)
+และ [config ที่ใช้](results/run_20261101_033145_feb1a19f/config_used.yaml)
+
+![Training loss and validation AUC with the full training split](results/run_20261101_033145_feb1a19f/training_curves.png)
 
 ## โครงสร้างโค้ด
 
