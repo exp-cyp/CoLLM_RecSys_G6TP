@@ -155,5 +155,6 @@ Checkpoints อยู่ใน `outputs/<run>/` และผลอยู่ใ�
 ไม่รวมใน Git
 
 - [คำอธิบายสถาปัตยกรรมและการฝึก](docs/STUDY_GUIDE_TH.md)
+- [คู่มืออ่านโค้ดรายบรรทัด พร้อมตัวอย่างจริงและคำถาม oral](docs/oral_study/README.md)
 - [คู่มือการทดลอง](docs/TRAIN_GUIDE_TH.md)
 - [อ้างอิงและเงื่อนไขการใช้](NOTICE.md)
